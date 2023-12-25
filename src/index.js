@@ -1,5 +1,5 @@
 const express =require('express');
-const {serverConfig, logger}=require('./config');
+const {ServerConfig, Logger}=require('./config');
 
 const apiRoutes = require('./routes')
 
@@ -8,9 +8,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use('/api',apiRoutes)
 
-app.listen(serverConfig.PORT,()=>{
-    console.log(`successfully started server at ${serverConfig.PORT}`);
-    logger.info({
+app.listen(ServerConfig.PORT,()=>{
+    console.log(`successfully started server at ${ServerConfig.PORT}`);
+    Logger.info({
         level: 'info',
         message: 'Hello distributed log files!'
     });
