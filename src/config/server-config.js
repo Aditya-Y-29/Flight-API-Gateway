@@ -9,5 +9,7 @@ module.exports={
     PORT: process.env.PORT,
     SALT_ROUNDS: process.env.SALT_ROUNDS,
     JWT_SECRET: process.env.JWT_SECRET,
-    JWT_EXPIRY: process.env.JWT_EXPIRY
+    JWT_EXPIRY: process.env.JWT_EXPIRY,
+    FLIGHT_SEARCH_SERVICE: process.env.FLIGHT_SEARCH_SERVICE,
+    FLIGHT_BOOKING_SERVICE: process.env.FLIGHT_BOOKING_SERVICE
 }

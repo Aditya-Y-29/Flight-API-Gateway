@@ -1,13 +1,17 @@
 const {StatusCodes}=require('http-status-codes')
 
-const {UserRepository}=require('../repositories')
+const {UserRepository, RoleRepository}=require('../repositories')
 const AppError=require('../utils/errors/app-error')
-const {Auth}=require('../utils/common')
+const {Auth,Enums}=require('../utils/common')
+const {CUSTOMER,ADMIN}=Enums.USER_ROLES
 const userRepository=new UserRepository()
+const roleRepository=new RoleRepository()
 
 async function create(data){
     try {
         const user=await userRepository.create(data)
+        const role=await roleRepository.getRoleByName(CUSTOMER)
+        user.addRole(role)
         return user
     } catch (error) {
         if(error.name=='TypeError'){
@@ -62,8 +66,47 @@ async function isAuthenticated(token){
     }
 }
 
+async function addRoleToUser(data){
+    try {
+        const user=await userRepository.get(data.id)
+        if(!user){
+            throw new AppError('No user found with given Id',StatusCodes.NOT_FOUND)
+        }
+        const role=await roleRepository.getRoleByName(data.role)
+        if(!role){
+            throw new AppError('This role does not exist',StatusCodes.NOT_FOUND)
+        }
+        user.addRole(role)
+        return user
+    } catch (error) {
+        console.log(error)
+        if(error instanceof AppError) return error
+        throw new AppError('Something went wrong',StatusCodes.INTERNAL_SERVER_ERROR)
+    }
+}
+
+async function isAdmin(id){
+    try {
+        const user=await userRepository.get(id)
+        if(!user){
+            throw new AppError('No user found with given Id',StatusCodes.NOT_FOUND)
+        }
+        const adminRole=await roleRepository.getRoleByName(ADMIN)
+        if(!adminRole){
+            throw new AppError('This role does not exist',StatusCodes.NOT_FOUND)
+        }
+        return user.hasRole(adminRole)
+    } catch (error) {
+        console.log(error)
+        if(error instanceof AppError) return error
+        throw new AppError('Something went wrong',StatusCodes.INTERNAL_SERVER_ERROR)
+    }
+}
+
 module.exports={
     create,
     signin,
-    isAuthenticated
+    isAuthenticated,
+    isAdmin,
+    addRoleToUser
 }

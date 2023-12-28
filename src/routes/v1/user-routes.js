@@ -9,4 +9,7 @@ router.post('/signup', AuthMiddleware.validateAuthRequest,
 router.post('/signin', AuthMiddleware.validateAuthRequest,
             UserController.signin);
 
+router.post('/role', AuthMiddleware.checkAuth, AuthMiddleware.isAdmin,
+            UserController.addRoleToUser);
+
 module.exports=router
